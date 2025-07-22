@@ -15,7 +15,7 @@ export default function Tree({ commits }: { commits: HierarchyNode<unknown> }) {
 
     const nodeCount = commits.descendants ? commits.descendants().length : 1;
 
-    const width = Math.max(containerWidth - 400, nodeCount * 10);
+    const width = Math.max(containerWidth - 400, nodeCount * 20);
     const height = Math.max(containerHeight - 400, nodeCount * 80);
 
     const treeLayout = tree<unknown>().size([width, height]);
@@ -60,7 +60,7 @@ export default function Tree({ commits }: { commits: HierarchyNode<unknown> }) {
       .append("circle")
       .attr("r", 15)
       .attr("fill", "#f00")
-      .attr("stroke", "#fff")
+      .attr("stroke", "#171717")
       .attr("stroke-width", 2);
 
     // Add text labels
@@ -73,11 +73,27 @@ export default function Tree({ commits }: { commits: HierarchyNode<unknown> }) {
       .style("font-size", "14px")
       .style("font-family", "Helvetica, Arial, sans-serif")
       .style("font-weight", "bold")
-      .style("fill", "#333")
+      .style("fill", "#d1d5dc")
+      .style("cursor", "pointer")
       .text(
         (d: any) =>
-          `${d.data.info.message || "Message"} (${d.data.info.author?.login || "unkown"})`,
-      );
+          `${d.data.info.message || "Message"} (${d.data.info.author?.name || "unknown"})`,
+      )
+      .on("mouseenter", function () {
+        select(this)
+          .style("fill", "#ff4444")
+          .text((d: any) => {
+            return `${d.data.info.message || "Message"} (${d.data.info.author?.name || "unknown"}) at ${new Date(d.data.info.author?.date).toLocaleString()}`;
+          });
+      })
+      .on("mouseleave", function () {
+        select(this)
+          .style("fill", "#d1d5dc")
+          .text(
+            (d: any) =>
+              `${d.data.info.message || "Message"} (${d.data.info.author?.name || "unknown"})`,
+          );
+      });
   }, [commits]);
 
   return (

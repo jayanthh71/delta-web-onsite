@@ -42,7 +42,7 @@ export default function Home() {
       </form>
 
       {commits && (
-        <div className="mt-16 w-5xl bg-white">
+        <div className="bg-background mt-16 w-5xl rounded-xl border-2 border-gray-300 p-4">
           <Tree commits={commits} />
         </div>
       )}

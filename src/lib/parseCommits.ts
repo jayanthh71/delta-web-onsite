@@ -5,7 +5,7 @@ export default function parseCommits(commits: any[]) {
     name: commit.sha,
     parent: commit.parents.length > 0 ? commit.parents[0].sha : null,
     info: {
-      author: commit.author,
+      author: commit.commit.committer,
       message: commit.commit.message,
       url: commit.commit.url,
     },
