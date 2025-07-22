@@ -4,7 +4,7 @@ export default async function getRepoCommits(repo: string) {
   const owner = repo.split("/")[3];
   const repoName = repo.split("/")[4].replace(".git", "");
 
-  const apiUrl = `https://api.github.com/repos/${owner}/${repoName}/commits`;
+  const apiUrl = `https://api.github.com/repos/${owner}/${repoName}/commits?per_page=100`;
   const headers = {
     Accept: "application/vnd.github+json",
     Authorization: `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,

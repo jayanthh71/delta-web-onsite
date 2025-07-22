@@ -1,6 +1,6 @@
 "use client";
 
-import { HierarchyNode, linkHorizontal, select, tree } from "d3";
+import { HierarchyNode, linkVertical, select, tree } from "d3";
 import { useEffect, useRef } from "react";
 
 export default function Tree({ commits }: { commits: HierarchyNode<unknown> }) {
@@ -12,35 +12,26 @@ export default function Tree({ commits }: { commits: HierarchyNode<unknown> }) {
 
     const containerWidth = treeRef.current.clientWidth || 800;
     const containerHeight = treeRef.current.clientHeight || 600;
-    const margin = { top: 40, right: 40, bottom: 40, left: 40 };
 
     const nodeCount = commits.descendants ? commits.descendants().length : 1;
 
-    const width = Math.max(
-      containerWidth - margin.left - margin.right,
-      nodeCount * 150,
-    );
-    const height = Math.max(
-      containerHeight - margin.top - margin.bottom,
-      nodeCount * 80,
-    );
+    const width = Math.max(containerWidth - 400, nodeCount * 10);
+    const height = Math.max(containerHeight - 400, nodeCount * 80);
 
     const treeLayout = tree<unknown>().size([width, height]);
 
     const svg = select(treeRef.current)
       .append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom);
+      .attr("width", width + 400)
+      .attr("height", height + 400);
 
-    const g = svg
-      .append("g")
-      .attr("transform", `translate(${margin.left},${margin.top})`);
+    const g = svg.append("g").attr("transform", `translate(${40},${40})`);
 
     const root = treeLayout(commits);
     const links = root.links();
     const nodes = root.descendants();
 
-    const pathGenerator = linkHorizontal<any, any>()
+    const pathGenerator = linkVertical<any, any>()
       .x((d: any) => d.x)
       .y((d: any) => d.y);
 
@@ -50,8 +41,8 @@ export default function Tree({ commits }: { commits: HierarchyNode<unknown> }) {
       .enter()
       .append("path")
       .attr("class", "link")
-      .attr("stroke", "#999")
-      .attr("stroke-width", 2)
+      .attr("stroke", "#f00")
+      .attr("stroke-width", 4)
       .attr("fill", "none")
       .attr("d", pathGenerator);
 
@@ -67,8 +58,8 @@ export default function Tree({ commits }: { commits: HierarchyNode<unknown> }) {
     // Add circles for nodes
     node
       .append("circle")
-      .attr("r", 5)
-      .attr("fill", "#333")
+      .attr("r", 15)
+      .attr("fill", "#f00")
       .attr("stroke", "#fff")
       .attr("stroke-width", 2);
 
@@ -76,13 +67,17 @@ export default function Tree({ commits }: { commits: HierarchyNode<unknown> }) {
     node
       .append("text")
       .attr("dy", "0.31em")
-      .attr("x", 0)
-      .attr("y", (d: any) => (d.children ? -15 : 15))
-      .style("text-anchor", "middle")
-      .style("font-size", "12px")
-      .style("font-family", "sans-serif")
+      .attr("x", 25)
+      .attr("y", 0)
+      .style("text-anchor", "start")
+      .style("font-size", "14px")
+      .style("font-family", "Helvetica, Arial, sans-serif")
+      .style("font-weight", "bold")
       .style("fill", "#333")
-      .text((d: any) => d.data.info.message || "Node");
+      .text(
+        (d: any) =>
+          `${d.data.info.message || "Message"} (${d.data.info.author?.login || "unkown"})`,
+      );
   }, [commits]);
 
   return (
