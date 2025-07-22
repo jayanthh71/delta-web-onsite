@@ -1,3 +1,5 @@
+import parseCommits from "./parseCommits";
+
 export default async function getRepoCommits(repo: string) {
   const owner = repo.split("/")[3];
   const repoName = repo.split("/")[4].replace(".git", "");
@@ -26,5 +28,5 @@ export default async function getRepoCommits(repo: string) {
       console.error("Error fetching commit data:", error);
     });
 
-  console.log(commitData);
+  return parseCommits(commitData);
 }

@@ -1,16 +1,20 @@
 "use client";
 
+import Tree from "@/components/Tree";
 import getRepoCommits from "@/lib/getRepoCommits";
+import { HierarchyNode } from "d3";
 import { useState } from "react";
 
 export default function Home() {
   const [repoUrl, setRepoUrl] = useState("");
+  const [commits, setCommits] = useState<HierarchyNode<unknown> | null>(null);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const repo = repoUrl.trim();
     if (repo) {
-      getRepoCommits(repo);
+      const response = await getRepoCommits(repo);
+      setCommits(response);
     } else {
       console.error("Please enter a valid repository URL.");
     }
@@ -33,9 +37,15 @@ export default function Home() {
           type="submit"
           className="mt-10 w-lg cursor-pointer rounded-lg bg-blue-600 p-2 text-white hover:bg-blue-700 active:bg-blue-800"
         >
-          Submit
+          Visualize
         </button>
       </form>
+
+      {commits && (
+        <div className="mt-16 w-5xl bg-white">
+          <Tree commits={commits} />
+        </div>
+      )}
     </div>
   );
 }
